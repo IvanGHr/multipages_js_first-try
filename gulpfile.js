@@ -59,8 +59,8 @@ gulp.task("watch", () => {
                 extensions: ["html"]
             }
         },
-		port: 4000,
-		notify: true
+		  port: 4000,
+		  notify: true
     });
     
     gulp.watch("./src/*.html", gulp.parallel("copy-html"));
