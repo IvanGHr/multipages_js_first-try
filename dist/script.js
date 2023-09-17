@@ -57,25 +57,22 @@ class VideoPlayer {
 
 /***/ }),
 
-/***/ "./src/js/modules/slider.js":
-/*!**********************************!*\
-  !*** ./src/js/modules/slider.js ***!
-  \**********************************/
+/***/ "./src/js/modules/slider/slider-main.js":
+/*!**********************************************!*\
+  !*** ./src/js/modules/slider/slider-main.js ***!
+  \**********************************************/
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": function() { return /* binding */ Slider; }
+/* harmony export */   "default": function() { return /* binding */ MainSlider; }
 /* harmony export */ });
-class Slider {
-  constructor(page, btns) {
-    this.page = document.querySelector(page); //main page
-    this.slides = Array.from(this.page.children); //chields of main page which show
-    this.btns = document.querySelectorAll(btns); //buttons to change chield
-    this.slideIndex = 1;
-  }
+/* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./slider */ "./src/js/modules/slider/slider.js");
 
-  //show page (number of page)
+class MainSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
+  constructor(btns) {
+    super(btns);
+  }
   showSlides(n) {
     if (n > this.slides.length) {
       this.slideIndex = 1;
@@ -85,7 +82,7 @@ class Slider {
     }
     try {
       this.hanson.style.opacity = '0';
-      if (n === 3) {
+      if (n == 3) {
         this.hanson.classList.add('animated');
         setTimeout(() => {
           this.hanson.style.opacity = '1';
@@ -95,32 +92,23 @@ class Slider {
         this.hanson.classList.remove('slideInUp');
       }
     } catch (e) {}
-
-    //animation all pages
-    this.slides.forEach(slide => {
+    for (const slide of this.slides) {
       slide.style.display = 'none';
-    });
-
-    //animation page who was choose
+    }
     this.slides[this.slideIndex - 1].style.display = 'block';
   }
-
-  //next page
   plusSlides(n) {
     this.showSlides(this.slideIndex += n);
   }
-
-  //change page after click on the button, and change page to 1 after click on the logo
   render() {
-    //try - If this part of the code is executed, then the code will move on, but if not, then the code will still move on.
     try {
       this.hanson = document.querySelector('.hanson');
     } catch (e) {}
-    this.btns.forEach(btn => {
-      btn.addEventListener('click', () => {
+    this.btns.forEach(item => {
+      item.addEventListener('click', () => {
         this.plusSlides(1);
       });
-      btn.parentNode.previousElementSibling.addEventListener('click', e => {
+      item.parentNode.previousElementSibling.addEventListener('click', e => {
         e.preventDefault();
         this.slideIndex = 1;
         this.showSlides(this.slideIndex);
@@ -129,7 +117,128 @@ class Slider {
     this.showSlides(this.slideIndex);
   }
 }
-;
+
+/***/ }),
+
+/***/ "./src/js/modules/slider/slider-mini.js":
+/*!**********************************************!*\
+  !*** ./src/js/modules/slider/slider-mini.js ***!
+  \**********************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ MiniSlider; }
+/* harmony export */ });
+/* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./slider */ "./src/js/modules/slider/slider.js");
+
+class MiniSlider extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
+  constructor(container, next, prev, activeClass, animate, autoplay) {
+    super(container, next, prev, activeClass, animate, autoplay);
+  }
+  decorizeSlides() {
+    for (const slide of this.slides) {
+      slide.classList.remove(this.activeClass); //for every slide = delete active class
+      if (this.animate) {
+        //if clider have dop animate (animate = true), all inactive slides 
+        slide.querySelector('.card__title').style.opacity = '0.4'; //title = opacity 0.4
+        slide.querySelector('.card__controls-arrow').style.opacity = '0'; //arrow = opacity 0
+      }
+    }
+
+    ;
+    if (!this.slides[0].closest('button')) {
+      //if active slide it is`nt a button
+      this.slides[0].classList.add(this.activeClass); //create active class
+    }
+
+    if (this.animate) {
+      //if children have dop animate (animate = true) - active slide
+      this.slides[0].querySelector('.card__title').style.opacity = '1';
+      this.slides[0].querySelector('.card__controls-arrow').style.opacity = '1';
+    }
+  }
+  nextSlide() {
+    if (this.slides[1].tagName == "BUTTON" && this.slides[2].tagName == "BUTTON") {
+      this.container.appendChild(this.slides[0]); // Slide
+      this.container.appendChild(this.slides[1]); // Btn
+      this.container.appendChild(this.slides[2]); // Btn
+      this.decorizeSlides();
+    } else if (this.slides[1].tagName == "BUTTON") {
+      this.container.appendChild(this.slides[0]); // Slide
+      this.container.appendChild(this.slides[1]); // Btn
+      this.decorizeSlides();
+    } else {
+      this.container.appendChild(this.slides[0]);
+      this.decorizeSlides();
+    }
+  }
+  bindTriggers() {
+    this.next.addEventListener('click', () => this.nextSlide());
+    this.prev.addEventListener('click', () => {
+      for (let i = this.slides.length - 1; i > 0; i--) {
+        //start for from the end of the slider
+        if (this.slides[i].tagName !== "BUTTON") {
+          //if slide = is`nt a button
+          let active = this.slides[i]; //getting last slide active class
+          this.container.insertBefore(active, this.slides[0]); //push last slide in the start of the slider
+          this.decorizeSlides(); //and call decorize slide
+          break; //stop
+        }
+      }
+    });
+  }
+
+  init() {
+    this.container.style.cssText = `
+            display: flex;
+            flex-wrap: wrap;
+            overflow: hidden;
+            align-items: flex-start;
+        `;
+    this.bindTriggers();
+    this.decorizeSlides();
+    if (this.autoplay) {
+      //if slider autoplay = true
+      setInterval(() => this.nextSlide(), 5000); //create auto next slide after 5 sec
+    }
+  }
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/slider/slider.js":
+/*!*****************************************!*\
+  !*** ./src/js/modules/slider/slider.js ***!
+  \*****************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ Slider; }
+/* harmony export */ });
+class Slider {
+  constructor() {
+    let {
+      container = null,
+      btns = null,
+      next = null,
+      prev = null,
+      activeClass = '',
+      animate,
+      autoplay
+    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    this.container = document.querySelector(container); //main box - slider
+    this.slides = this.container.children; //slides in the slider(chields);
+    this.btns = document.querySelectorAll(btns); //btn for sliding
+    this.prev = document.querySelector(prev); //btn prev slide
+    this.next = document.querySelector(next); //btn next slide
+    this.activeClass = activeClass; //const active class
+    this.animate = animate; //dop animate classes
+    this.autoplay = autoplay; //auto next slide
+    this.slideIndex = 1; //default number of slide
+  }
+}
 
 /***/ })
 
@@ -196,14 +305,45 @@ var __webpack_exports__ = {};
   !*** ./src/js/main.js ***!
   \************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js");
-/* harmony import */ var _modules_playVideo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/playVideo */ "./src/js/modules/playVideo.js");
+/* harmony import */ var _modules_slider_slider_main__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/slider/slider-main */ "./src/js/modules/slider/slider-main.js");
+/* harmony import */ var _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider/slider-mini */ "./src/js/modules/slider/slider-mini.js");
+/* harmony import */ var _modules_playVideo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/playVideo */ "./src/js/modules/playVideo.js");
 
 
-window.addEventListener('DOMContentLoaded', () => {
-  const slider = new _modules_slider__WEBPACK_IMPORTED_MODULE_0__["default"]('.page', '.next');
+
+window.addEventListener('DOMContentLoaded', function () {
+  const slider = new _modules_slider_slider_main__WEBPACK_IMPORTED_MODULE_0__["default"]({
+    btns: '.next',
+    container: '.page'
+  });
   slider.render();
-  const player = new _modules_playVideo__WEBPACK_IMPORTED_MODULE_1__["default"]('.showup .play', '.overlay');
+  const showUpSlider = new _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_1__["default"]({
+    container: '.showup__content-slider',
+    prev: '.showup__prev',
+    next: '.showup__next',
+    activeClass: 'card-active',
+    //class active
+    animate: true //dop classes
+  });
+
+  showUpSlider.init();
+  const modulesSlider = new _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_1__["default"]({
+    container: '.modules__content-slider',
+    prev: '.modules__info-btns .slick-prev',
+    next: '.modules__info-btns .slick-next',
+    activeClass: 'card-active',
+    animate: true,
+    autoplay: true
+  });
+  modulesSlider.init();
+  const feedSlider = new _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_1__["default"]({
+    container: '.feed__slider',
+    prev: '.feed__slider .slick-prev',
+    next: '.feed__slider .slick-next',
+    activeClass: 'feed__item-active'
+  });
+  feedSlider.init();
+  const player = new _modules_playVideo__WEBPACK_IMPORTED_MODULE_2__["default"]('.showup .play', '.overlay');
   player.init();
 });
 }();
