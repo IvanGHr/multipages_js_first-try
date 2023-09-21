@@ -50,117 +50,6 @@ class Difference {
 
 /***/ }),
 
-/***/ "./src/js/modules/forms.js":
-/*!*********************************!*\
-  !*** ./src/js/modules/forms.js ***!
-  \*********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": function() { return /* binding */ Form; }
-/* harmony export */ });
-/* harmony import */ var _submits_js_post__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./submits.js/post */ "./src/js/modules/submits.js/post.js");
-
-class Form {
-  constructor(forms) {
-    this.forms = document.querySelectorAll(forms);
-    this.inputs = document.querySelectorAll('input');
-    this.message = {
-      loading: 'Loading...',
-      suc: 'Thanks, we`ll contact you soon',
-      fail: 'Something was wrong'
-    };
-    this.path = 'assets/question.php';
-  }
-  clearInputs() {
-    this.inputs.forEach(input => {
-      input.value = '';
-    });
-  }
-  checkMail() {
-    const mailInputs = document.querySelectorAll('[type="email"]');
-    mailInputs.forEach(input => {
-      input.addEventListener('keypress', function (e) {
-        if (e.key.match(/[^a-z 0-9 @ \.]/ig)) {
-          e.preventDefault();
-        }
-      });
-    });
-  }
-  initMask() {
-    let setCursorPos = (pos, elem) => {
-      elem.focus();
-      if (elem.setSelectionRange) {
-        elem.setSelectionRange(pos, pos);
-      } else if (elem.createTextRange) {
-        let range = elem.createTextRange();
-        range.collapse(true);
-        range.moveEnd('character', pos);
-        range.moveStart('character', pos);
-        range.select();
-      }
-    };
-    function addMask(event) {
-      let matrix = '+1 (___) ___-____',
-        i = 0,
-        def = matrix.replace(/\D/g, ''),
-        value = this.value.replace(/\D/g, '');
-      if (def.length >= value.length) {
-        value = def;
-      }
-      this.value = matrix.replace(/./g, function (a) {
-        return /[_\d]/.test(a) && i < value.length ? value.charAt(i++) : i >= value.length ? '' : a;
-      });
-      if (event.type === 'blur') {
-        if (this.value.length == 2) {
-          this.value = '';
-        }
-      } else {
-        setCursorPos(this.value.length, this);
-      }
-    }
-    let inputs = document.querySelectorAll('[name="phone"]');
-    inputs.forEach(input => {
-      input.addEventListener('input', addMask);
-      input.addEventListener('focus', addMask);
-      input.addEventListener('blur', addMask);
-    });
-  }
-  init() {
-    this.checkMail();
-    this.initMask();
-    this.forms.forEach(elem => {
-      elem.addEventListener('submit', e => {
-        e.preventDefault();
-        let statusMess = document.createElement('div');
-        statusMess.style.cssText = `
-                    margin-top: 14px;
-                    font-size: 16px;
-                    color: grey;
-                `;
-        elem.parentNode.appendChild(statusMess);
-        statusMess.textContent = this.message.loading;
-        const formData = new FormData(elem);
-        this.postData = new _submits_js_post__WEBPACK_IMPORTED_MODULE_0__["default"]().postData(this.path, formData);
-        this.postData.then(result => {
-          console.log(result);
-          statusMess.textContent = this.message.suc;
-        }).catch(() => {
-          statusMess.textContent = this.message.fail;
-        }).finally(() => {
-          this.clearInputs();
-          setTimeout(() => {
-            statusMess.remove();
-          }, 4000);
-        });
-      });
-    });
-  }
-}
-
-/***/ }),
-
 /***/ "./src/js/modules/playVideo.js":
 /*!*************************************!*\
   !*** ./src/js/modules/playVideo.js ***!
@@ -399,32 +288,6 @@ class Slider {
   }
 }
 
-/***/ }),
-
-/***/ "./src/js/modules/submits.js/post.js":
-/*!*******************************************!*\
-  !*** ./src/js/modules/submits.js/post.js ***!
-  \*******************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": function() { return /* binding */ PostData; }
-/* harmony export */ });
-class PostData {
-  constructor(url, data) {
-    this.url = url;
-    this.data = data;
-  }
-  async postData(url, data) {
-    let result = await fetch(url, {
-      method: 'POST',
-      body: data
-    });
-    return await result.text();
-  }
-}
-
 /***/ })
 
 /******/ 	});
@@ -494,8 +357,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider/slider-mini */ "./src/js/modules/slider/slider-mini.js");
 /* harmony import */ var _modules_playVideo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/playVideo */ "./src/js/modules/playVideo.js");
 /* harmony import */ var _modules_difference__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/difference */ "./src/js/modules/difference.js");
-/* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
-
 
 
 
@@ -535,7 +396,6 @@ window.addEventListener('DOMContentLoaded', function () {
   const player = new _modules_playVideo__WEBPACK_IMPORTED_MODULE_2__["default"]('.showup .play', '.overlay');
   player.init();
   new _modules_difference__WEBPACK_IMPORTED_MODULE_3__["default"]('.officerold', '.officernew', '.officer__card-item').init();
-  new _modules_forms__WEBPACK_IMPORTED_MODULE_4__["default"]('.form').init();
 });
 }();
 /******/ })()
