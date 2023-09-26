@@ -5,8 +5,19 @@ import Difference from "./modules/difference";
 import Form from "./modules/forms";
 
 window.addEventListener('DOMContentLoaded', function () {
-	const slider = new MainSlider({ btns: '.next', container: '.page' })
-	slider.render()
+	const slider = new MainSlider({
+		btns: '.next',
+		container: '.page' 
+	});
+	slider.render();
+
+	const secondPageSlider = new MainSlider({
+		container: '.moduleapp',
+		btns: '.next',
+		nextBtn: '.nextmodule',
+		prevBtn: '.prevmodule'
+	});
+	secondPageSlider.render();
 
 	const showUpSlider = new MiniSlider({
 		container: '.showup__content-slider',
@@ -14,8 +25,8 @@ window.addEventListener('DOMContentLoaded', function () {
 		next: '.showup__next',
 		activeClass: 'card-active',//class active
 		animate: true,//dop classes
-	})
-	showUpSlider.init()
+	});
+	showUpSlider.init();
 
 	const modulesSlider = new MiniSlider({
 		container: '.modules__content-slider',
@@ -24,19 +35,19 @@ window.addEventListener('DOMContentLoaded', function () {
 		activeClass: 'card-active',
 		animate: true,
 		autoplay: true,
-	})
-	modulesSlider.init()
+	});
+	modulesSlider.init();
 
 	const feedSlider = new MiniSlider({
 		container: '.feed__slider',
 		prev: '.feed__slider .slick-prev',
 		next: '.feed__slider .slick-next',
 		activeClass: 'feed__item-active',
-	})
-	feedSlider.init()
+	});
+	feedSlider.init();
 
-	const player = new VideoPlayer('.showup .play', '.overlay')
-	player.init()
+	const player = new VideoPlayer('.showup .play', '.overlay');
+	player.init();
 
 	new Difference('.officerold', '.officernew', '.officer__card-item').init();
 	new Form('.form').init();
